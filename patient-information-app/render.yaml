@@ -1,0 +1,80 @@
+# render.yaml
+
+services:
+  - name: xrx-client
+    type: web
+    env: docker
+    dockerfilePath: nextjs-client/Dockerfile
+    buildCommand: "docker build . -f nextjs-client/Dockerfile"
+    startCommand: "npm start"
+    envVars:
+      - file: .env
+    plan: standard
+    ports:
+      - 3000
+
+  - name: xrx-orchestrator
+    type: web
+    env: docker
+    dockerfilePath: xrx-core/orchestrator/Dockerfile
+    buildCommand: "docker build . -f xrx-core/orchestrator/Dockerfile"
+    startCommand: "python orchestrator.py" # Replace with actual start command
+    envVars:
+      - file: .env
+    plan: standard
+    ports:
+      - 8000
+
+  - name: xrx-reasoning
+    type: web
+    env: docker
+    dockerfilePath: reasoning/Dockerfile
+    buildCommand: "docker build . -f reasoning/Dockerfile"
+    startCommand: "python reasoning.py" # Replace with actual start command
+    envVars:
+      - file: .env
+    plan: standard
+    ports:
+      - 8003
+
+  - name: xrx-stt
+    type: web
+    env: docker
+    dockerfilePath: xrx-core/stt/Dockerfile
+    buildCommand: "docker build . -f xrx-core/stt/Dockerfile"
+    startCommand: "python stt.py" # Replace with actual start command
+    envVars:
+      - file: .env
+    plan: standard
+    ports:
+      - 8001
+
+  - name: xrx-tts
+    type: web
+    env: docker
+    dockerfilePath: xrx-core/tts/Dockerfile
+    buildCommand: "docker build . -f xrx-core/tts/Dockerfile"
+    startCommand: "python tts.py" # Replace with actual start command
+    envVars:
+      - file: .env
+    plan: standard
+    ports:
+      - 8002
+
+  # Uncomment if guardrails service is needed
+  # - name: xrx-guardrails
+  #   type: web
+  #   env: docker
+  #   dockerfilePath: xrx-core/guardrails-proxy/Dockerfile
+  #   buildCommand: "docker build . -f xrx-core/guardrails-proxy/Dockerfile"
+  #   startCommand: "python guardrails.py" # Replace with actual start command
+  #   envVars:
+  #     - file: .env
+  #   plan: standard
+  #   ports:
+  #     - 8004
+
+  - name: xrx-redis
+    type: redis
+    image: "redis:alpine"
+    plan: standard
